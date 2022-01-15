@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.cscore.CvSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -25,6 +26,7 @@ import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
 
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import vision.CargoPipeline;
 
 /*
@@ -313,9 +315,13 @@ public final class Main {
 
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
+      CvSource processedVideo = CameraServer.getInstance().putVideo("processed", 320, 240);
+      Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
       VisionThread visionThread = new VisionThread(cameras.get(0),
               new CargoPipeline(), pipeline -> {
-        // do something with pipeline results
+                Mat sourceImage = pipeline.getImage();
+                Imgproc.resize(sourceImage, processedImage, processedImage.size());
+                processedVideo.putFrame(processedImage);
       });
       /* something like this for GRIP:
       VisionThread visionThread = new VisionThread(cameras.get(0),

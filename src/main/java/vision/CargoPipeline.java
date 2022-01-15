@@ -27,6 +27,9 @@ import org.opencv.objdetect.*;
 */
 public class CargoPipeline implements VisionPipeline {
 
+	//Inputs
+	private Mat image;
+
 	//Outputs
 	private Mat resizeImageOutput = new Mat();
 	private Mat hsvThresholdOutput = new Mat();
@@ -41,6 +44,7 @@ public class CargoPipeline implements VisionPipeline {
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	@Override	public void process(Mat source0) {
+		this.image = source0;
 		// Step Resize_Image0:
 		Mat resizeImageInput = source0;
 		double resizeImageWidth = 620.0;
@@ -71,6 +75,11 @@ public class CargoPipeline implements VisionPipeline {
 		boolean findBlobsDarkBlobs = false;
 		findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
 
+	}
+
+	//Gets the original image
+	public Mat getImage() {
+		return this.image;
 	}
 
 	/**
