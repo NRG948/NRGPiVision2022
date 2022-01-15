@@ -48,7 +48,7 @@
       <grip:Input step="2" socket="1"/>
       <grip:Input step="2" socket="2"/>
       <grip:Input step="2" socket="3">
-        <value>1</value>
+        <value>1.0</value>
       </grip:Input>
       <grip:Input step="2" socket="4">
         <value>BORDER_CONSTANT</value>
@@ -72,11 +72,6 @@
       </grip:Input>
       <grip:Output step="3" socket="0" previewed="true"/>
     </grip:Step>
-    <grip:Step name="Mask">
-      <grip:Input step="4" socket="0"/>
-      <grip:Input step="4" socket="1"/>
-      <grip:Output step="4" socket="0" previewed="true"/>
-    </grip:Step>
   </steps>
   <connections>
     <grip:Connection>
@@ -88,12 +83,12 @@
       <grip:Input step="1" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="1" socket="0" previewed="true"/>
-      <grip:Input step="2" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
       <grip:Output source="1" socket="0" previewed="true"/>
       <grip:Input step="0" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="1" socket="0" previewed="true"/>
+      <grip:Input step="2" socket="0"/>
     </grip:Connection>
   </connections>
   <settings>
