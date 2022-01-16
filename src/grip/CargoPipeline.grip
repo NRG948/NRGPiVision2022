@@ -102,10 +102,10 @@
   </settings>
   <codeGenerationSettings>
     <language>Java</language>
-    <className>GripPipeline</className>
-    <implementWpilibPipeline>false</implementWpilibPipeline>
-    <saveDir>C:\Users\Anony\GRIP</saveDir>
-    <packageName>package</packageName>
+    <className>CargoPipeline</className>
+    <implementWpilibPipeline>true</implementWpilibPipeline>
+    <saveDir>C:\Users\Anony\Documents\Workspaces\NRGPiVision2022\src\main\vision</saveDir>
+    <packageName>vision</packageName>
     <moduleName>grip</moduleName>
   </codeGenerationSettings>
 </grip:Pipeline>
