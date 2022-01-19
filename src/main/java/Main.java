@@ -31,8 +31,10 @@ import target.CargoTarget;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import vision.CargoPipeline;
+import utilities.Color;
 
 /*
    JSON format:
@@ -332,6 +334,13 @@ public final class Main {
                 Collections.sort(cargoTargets, (left, right) -> (int) (right.getDiameter() - left.getDiameter()));
                 
                 Mat sourceImage = pipeline.getImage();
+                Scalar targetColor = Color.GREEN;
+                for(CargoTarget cargoTarget: cargoTargets) {
+                  Imgproc.circle(sourceImage, cargoTarget.getCenter(), (int)cargoTarget.getDiameter()/2, targetColor);
+                  targetColor = Color.YELLOW;
+              
+                }
+              
                 Imgproc.resize(sourceImage, processedImage, processedImage.size());
                 processedVideo.putFrame(processedImage);
       });
