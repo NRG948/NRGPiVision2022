@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -24,8 +26,11 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionThread;
+import target.CargoTarget;
 
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.imgproc.Imgproc;
 import vision.CargoPipeline;
 
@@ -319,6 +324,13 @@ public final class Main {
       Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
       VisionThread visionThread = new VisionThread(cameras.get(0),
               new CargoPipeline(), pipeline -> {
+                ArrayList<CargoTarget> cargoTargets = new ArrayList<>();
+                MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
+                for(KeyPoint keyPoint: keyPoints.toArray()) {
+                  cargoTargets.add(new CargoTarget(keyPoint.pt, keyPoint.size));
+                }
+                Collections.sort(cargoTargets, (left, right) -> (int) (right.getDiameter() - left.getDiameter()));
+                
                 Mat sourceImage = pipeline.getImage();
                 Imgproc.resize(sourceImage, processedImage, processedImage.size());
                 processedVideo.putFrame(processedImage);
