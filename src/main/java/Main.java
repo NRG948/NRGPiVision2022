@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,24 +16,24 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoSource;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.vision.VisionPipeline;
-import edu.wpi.first.vision.VisionThread;
-import target.CargoTarget;
-
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import vision.CargoPipeline;
+
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.vision.VisionThread;
+
+import target.CargoTarget;
 import utilities.Color;
+import vision.CargoPipeline;
 
 /*
    JSON format:
@@ -266,21 +265,21 @@ public final class Main {
     NetworkTableInstance.getDefault()
         .getEntry(config.key)
         .addListener(event -> {
-              if (event.value.isDouble()) {
-                int i = (int) event.value.getDouble();
-                if (i >= 0 && i < cameras.size()) {
-                  server.setSource(cameras.get(i));
-                }
-              } else if (event.value.isString()) {
-                String str = event.value.getString();
-                for (int i = 0; i < cameraConfigs.size(); i++) {
-                  if (str.equals(cameraConfigs.get(i).name)) {
-                    server.setSource(cameras.get(i));
-                    break;
-                  }
-                }
+          if (event.value.isDouble()) {
+            int i = (int) event.value.getDouble();
+            if (i >= 0 && i < cameras.size()) {
+              server.setSource(cameras.get(i));
+            }
+          } else if (event.value.isString()) {
+            String str = event.value.getString();
+            for (int i = 0; i < cameraConfigs.size(); i++) {
+              if (str.equals(cameraConfigs.get(i).name)) {
+                server.setSource(cameras.get(i));
+                break;
               }
-            },
+            }
+          }
+        },
             EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     return server;
@@ -325,31 +324,27 @@ public final class Main {
       CvSource processedVideo = CameraServer.getInstance().putVideo("processed", 320, 240);
       Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
       VisionThread visionThread = new VisionThread(cameras.get(0),
-              new CargoPipeline(), pipeline -> {
-                ArrayList<CargoTarget> cargoTargets = new ArrayList<>();
-                MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
-                for(KeyPoint keyPoint: keyPoints.toArray()) {
-                  cargoTargets.add(new CargoTarget(keyPoint.pt, keyPoint.size));
-                }
-                Collections.sort(cargoTargets, (left, right) -> (int) (right.getDiameter() - left.getDiameter()));
-                
-                Mat sourceImage = pipeline.getImage();
-                Scalar targetColor = Color.GREEN;
-                for(CargoTarget cargoTarget: cargoTargets) {
-                  Imgproc.circle(sourceImage, cargoTarget.getCenter(), (int)cargoTarget.getDiameter()/2, targetColor);
-                  targetColor = Color.YELLOW;
-              
-                }
-              
-                Imgproc.resize(sourceImage, processedImage, processedImage.size());
-                processedVideo.putFrame(processedImage);
-      });
-      /* something like this for GRIP:
-      VisionThread visionThread = new VisionThread(cameras.get(0),
-              new GripPipeline(), pipeline -> {
-        ...
-      });
-       */
+          new CargoPipeline(), pipeline -> {
+            ArrayList<CargoTarget> cargoTargets = new ArrayList<>();
+            MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
+            for (KeyPoint keyPoint : keyPoints.toArray()) {
+              cargoTargets.add(new CargoTarget(keyPoint.pt, keyPoint.size));
+            }
+            Collections.sort(cargoTargets, (left, right) -> (int) (right.getDiameter() - left.getDiameter()));
+
+            Mat sourceImage = pipeline.getImage();
+            Scalar targetColor = Color.GREEN;
+            for (CargoTarget cargoTarget : cargoTargets) {
+              Imgproc.circle(sourceImage, cargoTarget.getCenter(), (int) cargoTarget.getDiameter() / 2, targetColor);
+              targetColor = Color.YELLOW;
+
+            }
+
+            Imgproc.resize(sourceImage, processedImage, processedImage.size());
+            processedVideo.putFrame(processedImage);
+          });
+
+
       visionThread.start();
     }
 
