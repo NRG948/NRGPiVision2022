@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +35,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import target.CargoTarget;
 import utilities.Color;
 import vision.BlueCargoPipeline;
+import vision.RedCargoPipeline;
+import vision.SwitchedPipeline;
 
 /*
    JSON format:
@@ -323,8 +326,12 @@ public final class Main {
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("processed", 320, 240);
       Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
-      VisionThread visionThread = new VisionThread(cameras.get(0),
-          new BlueCargoPipeline(), pipeline -> {
+      VisionThread visionThread = new VisionThread(
+        cameras.get(0),
+          new SwitchedPipeline(Map.of(
+            "BlueCargoPipeline", new BlueCargoPipeline(), 
+            "RedCargoPipeline", new RedCargoPipeline())),
+          pipeline -> {
             ArrayList<CargoTarget> cargoTargets = new ArrayList<>();
             MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
             for (KeyPoint keyPoint : keyPoints.toArray()) {
