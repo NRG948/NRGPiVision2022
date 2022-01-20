@@ -30,7 +30,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.vision.VisionThread;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import target.CargoTarget;
 import utilities.Color;
 import vision.CargoPipeline;
@@ -330,7 +330,8 @@ public final class Main {
             for (KeyPoint keyPoint : keyPoints.toArray()) {
               cargoTargets.add(new CargoTarget(keyPoint.pt, keyPoint.size));
             }
-            Collections.sort(cargoTargets, (left, right) -> (int) (left.getDistanceToTarget() - right.getDistanceToTarget()));
+            Collections.sort(cargoTargets,
+                (left, right) -> (int) (left.getDistanceToTarget() - right.getDistanceToTarget()));
 
             Mat sourceImage = pipeline.getImage();
             Scalar targetColor = Color.GREEN;
@@ -342,8 +343,16 @@ public final class Main {
 
             Imgproc.resize(sourceImage, processedImage, processedImage.size());
             processedVideo.putFrame(processedImage);
-          });
 
+            if (cargoTargets.isEmpty()) {
+              SmartDashboard.putBoolean("Vision/Target/HasTarget", false);
+            } else {
+              SmartDashboard.putBoolean("Vision/Target/HasTarget", true);
+              SmartDashboard.putNumber("Vision/Target/Distance", cargoTargets.get(0).getDistanceToTarget());
+              SmartDashboard.putNumber("vision/Target/Angle", cargoTargets.get(0).getAngleToTarget());
+            }
+
+          });
 
       visionThread.start();
     }
