@@ -33,7 +33,7 @@ import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import target.CargoTarget;
 import utilities.Color;
-import vision.CargoPipeline;
+import vision.BlueCargoPipeline;
 
 /*
    JSON format:
@@ -324,7 +324,7 @@ public final class Main {
       CvSource processedVideo = CameraServer.getInstance().putVideo("processed", 320, 240);
       Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
       VisionThread visionThread = new VisionThread(cameras.get(0),
-          new CargoPipeline(), pipeline -> {
+          new BlueCargoPipeline(), pipeline -> {
             ArrayList<CargoTarget> cargoTargets = new ArrayList<>();
             MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
             for (KeyPoint keyPoint : keyPoints.toArray()) {

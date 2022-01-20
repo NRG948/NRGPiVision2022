@@ -23,7 +23,7 @@ import edu.wpi.first.vision.VisionPipeline;
  *
  * @author GRIP
  */
-public class CargoPipeline implements VisionPipeline {
+public class BlueCargoPipeline implements VisionPipeline {
 
 	// Inputs
 	private Mat image;
