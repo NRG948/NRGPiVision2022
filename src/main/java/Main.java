@@ -330,7 +330,7 @@ public final class Main {
             for (KeyPoint keyPoint : keyPoints.toArray()) {
               cargoTargets.add(new CargoTarget(keyPoint.pt, keyPoint.size));
             }
-            Collections.sort(cargoTargets, (left, right) -> (int) (right.getDiameter() - left.getDiameter()));
+            Collections.sort(cargoTargets, (left, right) -> (int) (left.getDistanceToTarget() - right.getDistanceToTarget()));
 
             Mat sourceImage = pipeline.getImage();
             Scalar targetColor = Color.GREEN;
