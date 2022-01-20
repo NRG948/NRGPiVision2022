@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.vision.VisionPipeline;
+import edu.wpi.first.vision.VisionPipeline;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
@@ -25,7 +25,7 @@ import org.opencv.objdetect.*;
 *
 * @author GRIP
 */
-public class RedCargoPipeline implements VisionPipeline {
+public class RedCargoPipeline implements VisionPipeline, ImageAccessor {
 
 	//Outputs
 	private Mat resizeImageOutput = new Mat();
@@ -35,6 +35,8 @@ public class RedCargoPipeline implements VisionPipeline {
 	private Mat cvErodeOutput = new Mat();
 	private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
 
+	private Mat image;
+
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
@@ -43,6 +45,7 @@ public class RedCargoPipeline implements VisionPipeline {
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	@Override	public void process(Mat source0) {
+		this.image = source0;
 		// Step Resize_Image0:
 		Mat resizeImageInput = source0;
 		double resizeImageWidth = 640.0;
@@ -259,6 +262,10 @@ public class RedCargoPipeline implements VisionPipeline {
 		blobDet.detect(input, blobList);
 	}
 
+	@Override
+	public Mat getImage() {
+		return image;
+	}
 
 
 

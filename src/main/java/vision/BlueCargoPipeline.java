@@ -23,7 +23,7 @@ import edu.wpi.first.vision.VisionPipeline;
  *
  * @author GRIP
  */
-public class BlueCargoPipeline implements VisionPipeline {
+public class BlueCargoPipeline implements VisionPipeline,ImageAccessor {
 
 	// Inputs
 	private Mat image;
@@ -79,6 +79,7 @@ public class BlueCargoPipeline implements VisionPipeline {
 	}
 
 	// Gets the original image
+	@Override
 	public Mat getImage() {
 		return this.image;
 	}
