@@ -292,6 +292,7 @@ public final class Main {
    * Main.
    */
   public static void main(String... args) {
+    System.out.println("*** STARTING NRG PI VISION *************************************************************************");
     if (args.length > 0) {
       configFile = args[0];
     }
@@ -300,6 +301,8 @@ public final class Main {
     if (!readConfig()) {
       return;
     }
+
+    System.out.println("*** STARTING NETWORK TABLES ************************************************************************");
 
     // start NetworkTables
     NetworkTableInstance ntinst = NetworkTableInstance.getDefault();
@@ -312,6 +315,8 @@ public final class Main {
       ntinst.startDSClient();
     }
 
+    System.out.println("*** STARTING CAMERAS ******************************************************************************");
+
     // start cameras
     for (CameraConfig config : cameraConfigs) {
       cameras.add(startCamera(config));
@@ -322,12 +327,20 @@ public final class Main {
       startSwitchedCamera(config);
     }
 
+    System.out.println("*** STARTING VISION THREAD ************************************************************************");
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
-      CvSource processedVideo = CameraServer.getInstance().putVideo("processed", 320, 240);
+      VideoSource sourceVideo = cameras.get(0);
+
+      System.out.println("Source video is " + sourceVideo.getName());
+
+      CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 320, 240);
       Mat processedImage = new Mat(240, 320, processedVideo.getVideoMode().pixelFormat.getValue());
+
+      System.out.println("Process video is " + processedVideo.getName());
+
       VisionThread visionThread = new VisionThread(
-        cameras.get(0),
+        sourceVideo,
           new SwitchedPipeline(Map.of(
             "BlueCargoPipeline", new BlueCargoPipeline(), 
             "RedCargoPipeline", new RedCargoPipeline())),
