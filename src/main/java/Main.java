@@ -83,6 +83,7 @@ import vision.SwitchedPipeline;
 
 public final class Main {
   private static String configFile = "/boot/frc.json";
+  private static double genCount = 0;
 
   @SuppressWarnings("MemberName")
   public static class CameraConfig {
@@ -363,14 +364,16 @@ public final class Main {
 
             Imgproc.resize(sourceImage, processedImage, processedImage.size());
             processedVideo.putFrame(processedImage);
-
+            
             if (cargoTargets.isEmpty()) {
               SmartDashboard.putBoolean("Vision/Target/HasTarget", false);
             } else {
               SmartDashboard.putBoolean("Vision/Target/HasTarget", true);
               SmartDashboard.putNumber("Vision/Target/Distance", cargoTargets.get(0).getDistanceToTarget());
-              SmartDashboard.putNumber("vision/Target/Angle", cargoTargets.get(0).getAngleToTarget());
+              SmartDashboard.putNumber("Vision/Target/Angle", cargoTargets.get(0).getAngleToTarget());
             }
+
+            SmartDashboard.putNumber("Vision/genCount", genCount++);
 
           });
 
